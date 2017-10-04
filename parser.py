@@ -1,5 +1,10 @@
 # coding:utf-8
+from future.standard_library import install_aliases
+install_aliases() # noqa
+
 import re
+from urllib.request import urlopen
+from io import open
 
 
 city = [
@@ -16,7 +21,7 @@ other_city = [
 ]
 
 
-def parse(text):
+def extract_address(text):
     '''
         input: text(str)
         output: a list of address(array)
@@ -25,3 +30,15 @@ def parse(text):
     addr_optional = u'(?:\d{1,3}樓)?(?:\d{1,3}室)?(?:[\-|之]\d{1,2})?'
     pattern = addr_main + addr_optional
     return re.findall(pattern, text, re.UNICODE)
+
+
+def url_extract_address(url):
+    with urlopen(url) as f:
+        text = f.read().decode('utf-8')
+        return extract_address(text)
+
+
+def file_extract_address(filepath):
+    with open(filepath, encoding='utf-8') as f:
+        text = f.read()
+        return extract_address(text)

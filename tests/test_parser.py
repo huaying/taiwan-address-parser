@@ -1,5 +1,8 @@
 # coding:utf-8
-from parser import parse
+from parser import extract_address
+from parser import url_extract_address
+from parser import file_extract_address
+import os
 
 
 def test_many_address():
@@ -36,7 +39,7 @@ def test_many_address():
         u'台中市西屯區文華路7號之1',
         u'台北市松山區南京東路五段291巷29弄7號2樓',
     ]
-    res = parse(address_str)
+    res = extract_address(address_str)
     assert len(res) == len(expect)
     assert res == expect
 
@@ -60,6 +63,18 @@ def test_ig_post():
     #菲比吃台北
     '''
     expect = [u'新北市三重區正義南路36巷9號']
-    res = parse(instagram_post)
+    res = extract_address(instagram_post)
     assert len(res) == len(expect)
     assert res == expect
+
+
+def test_parse_file():
+    curdir = os.path.dirname(os.path.realpath(__file__))
+    res = file_extract_address('%s/file.txt' % curdir)
+    assert len(res) == 18
+
+
+def test_parse_url():
+    url = 'http://iko40623.pixnet.net/blog/post/434453072'
+    res = url_extract_address(url)
+    assert res == [u'台南市東區長榮路二段63號']
