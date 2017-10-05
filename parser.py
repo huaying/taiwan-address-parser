@@ -2,8 +2,10 @@
 from future.standard_library import install_aliases
 install_aliases() # noqa
 
+import json
 import re
 from urllib.request import urlopen
+from urllib.parse import quote
 from io import open
 
 
@@ -19,6 +21,24 @@ other_city = [
     u'台北縣', u'高雄縣', u'臺北市', u'臺北縣',
     u'台中縣', u'臺中市', u'臺中縣'
 ]
+
+
+def get_geocode(address):
+    geocode_api = 'http://maps.googleapis.com/maps/api/geocode/json?address='
+    with urlopen(geocode_api + quote(address)) as geocode:
+        res = json.loads(geocode.read().decode('utf-8'))
+
+        if res and res['status'] == 'OK':
+            result = res['results'][0]
+            geometry = result['geometry']
+            formatted_address = result['formatted_address']
+            is_tw_address = (
+                geometry['location_type'] != 'APPROXIMATE' and
+                'Taiwan' in formatted_address
+            )
+            if is_tw_address:
+                return geometry['location']
+        return None
 
 
 def extract_address(text):

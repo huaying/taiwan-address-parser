@@ -2,6 +2,7 @@
 from parser import extract_address
 from parser import url_extract_address
 from parser import file_extract_address
+from parser import get_geocode
 import os
 
 
@@ -78,3 +79,10 @@ def test_parse_url():
     url = 'http://iko40623.pixnet.net/blog/post/434453072'
     res = url_extract_address(url)
     assert res == [u'台南市東區長榮路二段63號']
+
+
+def test_get_geocode():
+    expect = {u'lat': 25.0529774, u'lng': 121.5664644}
+    res = get_geocode('台北市松山區南京東路五段291巷29弄7號2樓')
+    assert res['lat'] == expect['lat']
+    assert res['lng'] == expect['lng']
